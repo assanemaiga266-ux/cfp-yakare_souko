@@ -7,12 +7,12 @@
    (Console Firebase > Paramètres du projet > Tes applications > SDK config).
    ---------------------------------------------------------- */
 const firebaseConfig = {
-  apiKey: "REMPLACE_MOI",
-  authDomain: "REMPLACE_MOI.firebaseapp.com",
-  projectId: "REMPLACE_MOI",
-  storageBucket: "REMPLACE_MOI.appspot.com",
-  messagingSenderId: "REMPLACE_MOI",
-  appId: "REMPLACE_MOI"
+  apiKey: "AIzaSyCGJE3Dr30eujNQfUECTIRnAuROiVR1PWU",
+  authDomain: "cfp-yakare-souko.firebaseapp.com",
+  projectId: "cfp-yakare-souko",
+  storageBucket: "cfp-yakare-souko.firebasestorage.app",
+  messagingSenderId: "642420663151",
+  appId: "1:642420663151:web:9688b9eb665cf3254a3e9a"
 };
 
 let db = null;
@@ -38,14 +38,20 @@ const JOURS = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 
 const FILIERES_DEFAUT = [
   { nom: "Coupe Couture", duree: "1 an", icon: "🧵", tarifInscription: 10000, tarifMensuel: 7500 },
-  { nom: "Henné & Tatouage", duree: "3 mois", icon: "🎨", tarifInscription: 10000, tarifMensuel: 6000 },
-  { nom: "Makeup & Foulard", duree: "3 mois", icon: "💄", tarifInscription: 10000, tarifMensuel: 6000 },
-  { nom: "Coiffure / Pose Perruque", duree: "6 mois", icon: "💇🏾‍♀️", tarifInscription: 10000, tarifMensuel: 6500 },
+  { nom: "Henné", duree: "3 mois", icon: "🎨", tarifInscription: 10000, tarifMensuel: 6000 },
+  { nom: "Tatouage", duree: "3 mois", icon: "🖋️", tarifInscription: 10000, tarifMensuel: 6000 },
+  { nom: "Makeup", duree: "3 mois", icon: "💄", tarifInscription: 10000, tarifMensuel: 6000 },
+  { nom: "Foulard", duree: "3 mois", icon: "🧣", tarifInscription: 10000, tarifMensuel: 6000 },
+  { nom: "Coiffure", duree: "6 mois", icon: "💇🏾‍♀️", tarifInscription: 10000, tarifMensuel: 6500 },
+  { nom: "Pose Perruque", duree: "6 mois", icon: "👱🏾‍♀️", tarifInscription: 10000, tarifMensuel: 6500 },
   { nom: "Installation Solaire", duree: "1 an", icon: "🔆", tarifInscription: 15000, tarifMensuel: 9000 },
-  { nom: "Plomberie & Sanitaire", duree: "1 an", icon: "🔧", tarifInscription: 15000, tarifMensuel: 9000 },
-  { nom: "Carrelage & Pavé", duree: "6 mois", icon: "🧱", tarifInscription: 12000, tarifMensuel: 8000 },
+  { nom: "Plomberie", duree: "1 an", icon: "🔧", tarifInscription: 15000, tarifMensuel: 9000 },
+  { nom: "Sanitaire", duree: "1 an", icon: "🚿", tarifInscription: 15000, tarifMensuel: 9000 },
+  { nom: "Carrelage", duree: "6 mois", icon: "🧱", tarifInscription: 12000, tarifMensuel: 8000 },
+  { nom: "Pavé", duree: "6 mois", icon: "🪨", tarifInscription: 12000, tarifMensuel: 8000 },
   { nom: "Électricité Bâtiment", duree: "1 an", icon: "💡", tarifInscription: 15000, tarifMensuel: 9000 },
-  { nom: "Peinture / Décoration", duree: "6 mois", icon: "🖌️", tarifInscription: 12000, tarifMensuel: 7000 },
+  { nom: "Peinture", duree: "6 mois", icon: "🖌️", tarifInscription: 12000, tarifMensuel: 7000 },
+  { nom: "Décoration", duree: "6 mois", icon: "🖼️", tarifInscription: 12000, tarifMensuel: 7000 },
   { nom: "Décor Événementielle", duree: "3 mois", icon: "🎉", tarifInscription: 10000, tarifMensuel: 6500 },
   { nom: "Pâtisserie", duree: "3 mois", icon: "🧁", tarifInscription: 10000, tarifMensuel: 7000 },
   { nom: "Cuisine", duree: "6 mois", icon: "🍲", tarifInscription: 12000, tarifMensuel: 7500 },
@@ -70,16 +76,32 @@ function formateurNom(id){ const f = FORMATEURS.find(x=>x.id===id); return f? f.
 function apprenantNomComplet(a){ return `${a.prenom||""} ${a.nom||""}`.trim(); }
 
 /* ---------- 4. FIRESTORE : chargement + seed ---------- */
+function slugify(str){
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)/g,'');
+}
+
 async function seedFilieresSiVide(){
   if (!firebaseReady) return;
-  const snap = await db.collection('filieres').limit(1).get();
-  if (snap.empty){
-    const batch = db.batch();
-    FILIERES_DEFAUT.forEach(f=>{
-      const ref = db.collection('filieres').doc();
+  const batch = db.batch();
+  for (const f of FILIERES_DEFAUT){
+    const ref = db.collection('filieres').doc(slugify(f.nom));
+    const doc = await ref.get();
+    if (!doc.exists){
       batch.set(ref, f);
-    });
-    await batch.commit();
+    }
+  }
+  await batch.commit();
+}
+
+function erreurFirestore(e){
+  console.error("Erreur Firestore:", e);
+  if (e && e.code === 'permission-denied'){
+    showToast("⛔ Accès refusé — vérifie que tes règles Firestore sont bien publiées");
+  } else {
+    showToast("⚠️ Erreur de connexion à Firebase");
   }
 }
 
@@ -93,27 +115,27 @@ function ecouterCollections(){
   db.collection('filieres').orderBy('nom').onSnapshot(snap=>{
     FILIERES = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
   db.collection('apprenants').orderBy('dateInscription','desc').onSnapshot(snap=>{
     APPRENANTS = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
   db.collection('formateurs').onSnapshot(snap=>{
     FORMATEURS = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
   db.collection('seances').onSnapshot(snap=>{
     SEANCES = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
   db.collection('paiements').orderBy('date','desc').onSnapshot(snap=>{
     PAIEMENTS = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
   db.collection('depenses').orderBy('date','desc').onSnapshot(snap=>{
     DEPENSES = snap.docs.map(d=>({id:d.id, ...d.data()}));
     renderAll();
-  });
+  }, erreurFirestore);
 }
 
 async function saveDoc(collection, data, id=null){
@@ -704,7 +726,11 @@ function imprimerAttestation(){
 
 /* ---------- 17. INIT ---------- */
 window.addEventListener('DOMContentLoaded', async ()=>{
-  await seedFilieresSiVide();
+  try {
+    await seedFilieresSiVide();
+  } catch(e){
+    erreurFirestore(e);
+  }
   ecouterCollections();
   updateFab();
   if ('serviceWorker' in navigator){
