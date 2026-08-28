@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cfp-ysk-v1';
+const CACHE_NAME = 'cfp-ysk-v2';
 const ASSETS = [
   './index.html',
   './app.js',
