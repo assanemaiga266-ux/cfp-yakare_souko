@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#241454">
+<title>CFP Yakaré Souko — Gestion du Centre</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple-deep:#241454;
+  --purple-mid:#3D2B7E;
+  --orange:#F5760D;
+  --orange-light:#FFA94D;
+  --gold:#FBBF24;
+  --bg:#FAF7F2;
+  --ink:#1D1B2E;
+  --ink-soft:#635C7A;
+  --card:#FFFFFF;
+  --stitch:#D8D2C4;
+  --danger:#D64545;
+  --success:#2E9E5B;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:78px;
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:inherit;cursor:pointer;border:none;}
+input,select,textarea{font-family:inherit;}
+a{color:inherit;}
+
+/* ===== HEADER ===== */
+header.top{
+  background:linear-gradient(135deg,var(--purple-deep),var(--purple-mid) 70%);
+  color:#fff;
+  padding:22px 18px 26px;
+  position:relative;
+  overflow:hidden;
+}
+header.top::after{
+  content:"";
+  position:absolute;
+  right:-40px;top:-40px;
+  width:160px;height:160px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(245,118,13,0.35),transparent 70%);
+}
+.brand-row{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.seal{
+  width:46px;height:46px;border-radius:50%;
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--purple-deep);
+  border:2px dashed var(--gold);
+  flex-shrink:0;
+}
+.brand-text .eyebrow{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;}
+.brand-text h1{font-size:19px;font-weight:600;line-height:1.15;margin-top:2px;}
+.brand-text .sub{font-size:12px;color:rgba(255,255,255,0.7);margin-top:3px;}
+
+/* ===== TABS CONTENT ===== */
+main{padding:16px;max-width:640px;margin:0 auto;}
+.section{display:none;animation:fadein .25s ease;}
+.section.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 1px 3px rgba(36,20,84,0.08);
+  border:1px solid rgba(36,20,84,0.06);
+}
+.card-title{font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
+
+/* Dashboard stat grid */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat{
+  background:var(--card);border-radius:var(--radius);padding:14px;
+  border:1px solid rgba(36,20,84,0.06);
+  box-shadow:0 1px 3px rgba(36,20,84,0.08);
+  position:relative;
+}
+.stat .num{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--purple-deep);}
+.stat .label{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+.stat.accent{background:linear-gradient(135deg,var(--orange),var(--orange-light));}
+.stat.accent .num,.stat.accent .label{color:#fff;}
+
+.filiere-list{display:flex;flex-direction:column;gap:8px;}
+.filiere-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 12px;border-radius:10px;background:#fff;
+  border:1px dashed var(--stitch);
+}
+.filiere-row .fname{font-size:13.5px;font-weight:600;}
+.filiere-row .fdur{font-size:11.5px;color:var(--ink-soft);}
+.count-pill{
+  background:var(--purple-deep);color:#fff;font-size:11px;font-weight:600;
+  padding:3px 9px;border-radius:20px;
+}
+
+/* Filière cards */
+.metier-card{
+  background:#fff;border-radius:var(--radius);padding:14px;margin-bottom:10px;
+  border:1px dashed var(--stitch);
+  position:relative;
+}
+.metier-card .icon{font-size:22px;}
+.metier-card h3{font-size:15px;margin:6px 0 2px;}
+.metier-card .meta{font-size:12px;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.metier-card .meta span{background:var(--bg);padding:2px 8px;border-radius:6px;}
+.metier-card .actions{margin-top:10px;display:flex;gap:8px;}
+
+/* Buttons */
+.btn{
+  padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;justify-content:center;
+}
+.btn-primary{background:var(--orange);color:#fff;}
+.btn-primary:active{background:#DE6809;}
+.btn-outline{background:transparent;border:1.5px solid var(--purple-deep);color:var(--purple-deep);}
+.btn-ghost{background:var(--bg);color:var(--ink);}
+.btn-danger{background:transparent;color:var(--danger);border:1.5px solid var(--danger);}
+.btn-sm{padding:6px 11px;font-size:12px;}
+.btn-block{width:100%;}
+.fab{
+  position:fixed;right:18px;bottom:92px;z-index:20;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--orange);color:#fff;font-size:26px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 16px rgba(245,118,13,0.4);
+}
+
+/* Lists: apprenants / formateurs */
+.person-row{
+  display:flex;align-items:center;gap:12px;
+  background:#fff;border-radius:12px;padding:11px 12px;margin-bottom:8px;
+  border:1px solid rgba(36,20,84,0.06);
+  box-shadow:0 1px 2px rgba(36,20,84,0.05);
+}
+.avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:var(--purple-mid);color:#fff;font-weight:600;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.person-info{flex:1;min-width:0;}
+.person-info .pname{font-size:14px;font-weight:600;}
+.person-info .pmeta{font-size:11.5px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.badge{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;}
+.badge.ok{background:#E4F5EA;color:var(--success);}
+.badge.warn{background:#FDECEC;color:var(--danger);}
+
+.search-bar{
+  display:flex;gap:8px;margin-bottom:12px;
+}
+.search-bar input{
+  flex:1;padding:11px 13px;border-radius:10px;border:1px solid var(--stitch);
+  font-size:13.5px;background:#fff;
+}
+.search-bar select{
+  padding:11px;border-radius:10px;border:1px solid var(--stitch);font-size:13px;background:#fff;
+}
+
+/* Empty state */
+.empty{
+  text-align:center;padding:36px 16px;color:var(--ink-soft);
+}
+.empty .icon{font-size:34px;margin-bottom:8px;}
+.empty p{font-size:13.5px;}
+
+/* Modal */
+.overlay{
+  position:fixed;inset:0;background:rgba(29,27,46,0.55);
+  display:none;align-items:flex-end;z-index:100;
+}
+.overlay.active{display:flex;}
+.modal{
+  background:#fff;width:100%;max-height:88vh;overflow-y:auto;
+  border-radius:20px 20px 0 0;padding:20px;
+  animation:slideup .25s ease;
+}
+@keyframes slideup{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal h2{font-size:18px;margin-bottom:14px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--stitch);font-size:14px;
+}
+.field textarea{resize:vertical;min-height:60px;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;}
+.close-x{position:absolute;top:14px;right:16px;font-size:20px;color:var(--ink-soft);background:none;}
+.modal{position:relative;}
+
+/* Bottom nav */
+nav.bottom{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;border-top:1px solid rgba(36,20,84,0.08);
+  display:flex;z-index:30;overflow-x:auto;
+  padding-bottom:env(safe-area-inset-bottom);
+  scrollbar-width:none;
+}
+nav.bottom::-webkit-scrollbar{display:none;}
+nav.bottom button{
+  flex:0 0 auto;min-width:64px;background:none;padding:9px 6px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:2px;color:var(--ink-soft);
+}
+nav.bottom button .ic{font-size:19px;}
+nav.bottom button .lb{font-size:9.5px;font-weight:600;white-space:nowrap;}
+nav.bottom button.active{color:var(--orange);}
+
+/* Attestation certificate */
+.cert{
+  background:#fff;border:3px double var(--purple-deep);border-radius:6px;
+  padding:26px 18px;text-align:center;position:relative;
+}
+.cert .cert-seal{
+  width:70px;height:70px;border-radius:50%;border:2.5px dashed var(--gold);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
+  font-family:'Fraunces',serif;color:var(--purple-deep);font-weight:700;font-size:11px;line-height:1.2;
+}
+.cert h2{font-size:17px;color:var(--purple-deep);margin-bottom:2px;}
+.cert .cert-sub{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:18px;}
+.cert .cert-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:14px 0 4px;color:var(--ink);}
+.cert .cert-body{font-size:13px;color:var(--ink-soft);line-height:1.7;}
+.cert .cert-metier{font-weight:700;color:var(--orange);}
+.cert .cert-footer{display:flex;justify-content:space-between;margin-top:26px;font-size:11px;color:var(--ink-soft);}
+
+@media print{
+  header.top,nav.bottom,.fab,.no-print{display:none !important;}
+  body{padding-bottom:0;background:#fff;}
+  .section{display:none !important;}
+  .section.printing{display:block !important;}
+  main{padding:0;max-width:100%;}
+}
+
+.toast{
+  position:fixed;bottom:92px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:30px;
+  font-size:13px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.toast.show{opacity:1;}
+
+.tab-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.chip{
+  flex-shrink:0;padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;
+  background:#fff;border:1px solid var(--stitch);color:var(--ink-soft);
+}
+.chip.active{background:var(--purple-deep);color:#fff;border-color:var(--purple-deep);}
+
+.progress-bar{height:6px;background:var(--bg);border-radius:6px;overflow:hidden;margin-top:6px;}
+.progress-bar .fill{height:100%;background:var(--orange);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand-row">
+    <img id="logoImg" class="seal" src="icon-192.png" style="object-fit:cover;" alt="logo">
+    <div class="brand-text">
+      <div class="eyebrow">CFP · Koutiala Lafiala</div>
+      <h1>Yakaré Souko</h1>
+      <div class="sub">Centre de Formation Professionnelle · Apprenez autrement</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= DASHBOARD ================= -->
+  <section id="tab-dashboard" class="section active">
+    <div class="stat-grid">
+      <div class="stat"><div class="num mono" id="statApprenants">0</div><div class="label">Apprenants inscrits</div></div>
+      <div class="stat"><div class="num mono" id="statFilieres">15</div><div class="label">Filières actives</div></div>
+      <div class="stat accent"><div class="num mono" id="statRevenus">0</div><div class="label">Reçu ce mois (FCFA)</div></div>
+      <div class="stat"><div class="num mono" id="statImpayes">0</div><div class="label">Paiements en retard</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Répartition par filière</div>
+      <div class="filiere-list" id="dashFiliereList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Derniers inscrits</div>
+      <div id="dashRecents"><div class="empty"><div class="icon">🪡</div><p>Aucun apprenant pour le moment</p></div></div>
+    </div>
+  </section>
+
+  <!-- ================= APPRENANTS ================= -->
+  <section id="tab-apprenants" class="section">
+    <div class="search-bar">
+      <input type="text" id="searchApprenant" placeholder="Rechercher un apprenant...">
+      <select id="filterFiliere"><option value="">Toutes filières</option></select>
+    </div>
+    <div id="apprenantsList"></div>
+  </section>
+
+  <!-- ================= FILIERES ================= -->
+  <section id="tab-filieres" class="section">
+    <div id="filieresList"></div>
+  </section>
+
+  <!-- ================= FORMATEURS ================= -->
+  <section id="tab-formateurs" class="section">
+    <div id="formateursList"></div>
+  </section>
+
+  <!-- ================= PLANNING ================= -->
+  <section id="tab-planning" class="section">
+    <div class="tab-scroll" id="planningDayChips"></div>
+    <div id="planningList"></div>
+  </section>
+
+  <!-- ================= PAIEMENTS ================= -->
+  <section id="tab-paiements" class="section">
+    <div class="stat-grid">
+      <div class="stat"><div class="num mono" id="payTotalMonth">0</div><div class="label">Total encaissé (mois)</div></div>
+      <div class="stat"><div class="num mono" id="payRetardCount">0</div><div class="label">Apprenants en retard</div></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="searchPaiement" placeholder="Rechercher un apprenant...">
+    </div>
+    <div id="paiementsList"></div>
+  </section>
+
+  <!-- ================= LIVRE DE COMPTE ================= -->
+  <section id="tab-livre" class="section">
+    <div class="stat-grid">
+      <div class="stat"><div class="num mono" id="livreEntrees">0</div><div class="label">Total entrées</div></div>
+      <div class="stat"><div class="num mono" id="livreSorties">0</div><div class="label">Total sorties</div></div>
+    </div>
+    <div class="stat accent" style="margin-bottom:14px;">
+      <div class="num mono" id="livreSolde">0</div><div class="label">Solde actuel (FCFA)</div>
+    </div>
+    <div class="tab-scroll">
+      <button class="chip active" data-livre-filter="tout">Tout</button>
+      <button class="chip" data-livre-filter="entree">Entrées</button>
+      <button class="chip" data-livre-filter="sortie">Sorties</button>
+    </div>
+    <div id="livreList"></div>
+  </section>
+
+  <!-- ================= ATTESTATIONS ================= -->
+  <section id="tab-attestations" class="section">
+    <div class="card">
+      <div class="card-title">Générer une attestation</div>
+      <div class="field">
+        <label>Apprenant</label>
+        <select id="certApprenantSelect"><option value="">Choisir un apprenant...</option></select>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="genererAttestation()">✒️ Générer l'attestation</button>
+    </div>
+    <div id="certPreviewWrap"></div>
+  </section>
+
+</main>
+
+<button class="fab no-print" id="fabBtn">+</button>
+
+<nav class="bottom no-print">
+  <button data-tab="dashboard" class="active"><span class="ic">🏠</span><span class="lb">Accueil</span></button>
+  <button data-tab="apprenants"><span class="ic">🧑🏾‍🎓</span><span class="lb">Apprenants</span></button>
+  <button data-tab="filieres"><span class="ic">🧰</span><span class="lb">Filières</span></button>
+  <button data-tab="formateurs"><span class="ic">👩🏾‍🏫</span><span class="lb">Formateurs</span></button>
+  <button data-tab="planning"><span class="ic">🗓️</span><span class="lb">Planning</span></button>
+  <button data-tab="paiements"><span class="ic">💰</span><span class="lb">Paiements</span></button>
+  <button data-tab="livre"><span class="ic">📒</span><span class="lb">Livre</span></button>
+  <button data-tab="attestations"><span class="ic">📜</span><span class="lb">Attest.</span></button>
+</nav>
+
+<!-- ============ MODAL GENERIQUE ============ -->
+<div class="overlay no-print" id="overlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>
